@@ -1,5 +1,5 @@
 CREATE TABLE cards (
-                       id SERIAL PRIMARY KEY,
+                       id BIGSERIAL PRIMARY KEY,
                        encrypted_card_number VARCHAR(255) UNIQUE NOT NULL,
                        owner_id BIGINT,
                        expiration_date TIMESTAMP,

@@ -26,7 +26,9 @@ public class Transaction {
     private Card toCard;
     @Column(nullable = false)
     private BigDecimal amount;
+    @Enumerated(EnumType.STRING)
     private CurrencyType currency;
     private LocalDateTime timestamp;
+    @Enumerated(EnumType.STRING)
     private TransactionStatus status;
 }
