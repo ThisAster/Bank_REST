@@ -34,6 +34,12 @@ logging:
     root: DEBUG
     change-log: DEBUG
 
+currency:
+  usd: 1.0        # базовая валюта
+  eur: 0.91       # 1 EUR ≈ 0.91 USD
+  byn: 0.30       # 1 BYN ≈ 0.30 USD
+  rub: 0.013      # 1 RUB ≈ 0.013 USD
+
 jwt:
   secret-key: ${JWT_SECRET_KEY}
   expiration: ${JWT_EXPIRATION_TIME}
