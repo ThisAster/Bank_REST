@@ -1,5 +1,5 @@
 CREATE TABLE transactions (
-                              id BIGSERIAL PRIMARY KEY,
+                              id SERIAL PRIMARY KEY,
                               from_card_id BIGINT,
                               to_card_id BIGINT,
                               amount DECIMAL(19,2) NOT NULL,
