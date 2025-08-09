@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/migration/changelog/changeset/V1__create_users.sql
+  - include:
+      file: db/migration/changelog/changeset/V2__create_cards.sql
+  - include:
+      file: db/migration/changelog/changeset/V3__create_transactions.sql
