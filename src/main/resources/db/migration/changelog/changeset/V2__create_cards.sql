@@ -5,5 +5,5 @@ CREATE TABLE cards (
                        expiration_date TIMESTAMP,
                        status VARCHAR(50),
                        balance DECIMAL(19, 2),
-                       CONSTRAINT fk_cards_owner FOREIGN KEY (owner_id) REFERENCES users (id) ON DELETE SET NULL
+                       CONSTRAINT fk_cards_owner FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE SET NULL
 );

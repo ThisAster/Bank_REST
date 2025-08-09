@@ -6,6 +6,6 @@ CREATE TABLE transactions (
                               currency VARCHAR(50),
                               timestamp TIMESTAMP,
                               status VARCHAR(50),
-                              CONSTRAINT fk_transactions_from_card FOREIGN KEY (from_card_id) REFERENCES cards (id) ON DELETE SET NULL,
-                              CONSTRAINT fk_transactions_to_card FOREIGN KEY (to_card_id) REFERENCES cards (id) ON DELETE SET NULL
+                              CONSTRAINT fk_transactions_from_card FOREIGN KEY (from_card_id) REFERENCES cards(id) ON DELETE SET NULL,
+                              CONSTRAINT fk_transactions_to_card FOREIGN KEY (to_card_id) REFERENCES cards(id) ON DELETE SET NULL
 );
