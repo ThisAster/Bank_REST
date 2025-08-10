@@ -41,7 +41,9 @@ currency:
   rub: 0.013      # 1 RUB ≈ 0.013 USD
 
 jwt:
-  secret-key: ${JWT_SECRET_KEY}
-  expiration: ${JWT_EXPIRATION_TIME}
-  header: Authorization
-  prefix: Bearer
+  secret:
+    access: ${JWT_SECRET_ACCESS}
+    refresh: ${JWT_SECRET_REFRESH}
+  expiration:
+    access: ${JWT_EXPIRATION_ACCESS_TIME}
+    refresh: ${JWT_EXPIRATION_REFRESH_TIME}
