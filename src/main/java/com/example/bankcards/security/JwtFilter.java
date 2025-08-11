@@ -27,7 +27,7 @@ public class JwtFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         try {
-            String jwt = getJwtFromRequest((HttpServletRequest) servletRequest);
+            final String jwt = getJwtFromRequest((HttpServletRequest) servletRequest);
             if (StringUtils.hasText(jwt) && jwtProvider.validateAccessToken(jwt)) {
                 final Claims claims = jwtProvider.getAccessClaims(jwt);
                 final JwtAuthentication jwtInfoToken = jwtProvider.generateJwtAuthentication(claims);
@@ -41,7 +41,7 @@ public class JwtFilter extends GenericFilterBean {
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        final String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(BEARER_PREFIX.length()).trim();
         }

@@ -65,7 +65,7 @@ public class JwtProvider {
 
     public String generateRefreshToken(@NonNull User user) {
         final LocalDateTime now = LocalDateTime.now();
-        final Instant refreshExpirationInstant = now.plusDays(expirationRefreshInMinutes)
+        final Instant refreshExpirationInstant = now.plusMinutes(expirationRefreshInMinutes)
                 .atZone(ZoneId.systemDefault()).toInstant();
         final Date refreshExpiration = Date.from(refreshExpirationInstant);
 

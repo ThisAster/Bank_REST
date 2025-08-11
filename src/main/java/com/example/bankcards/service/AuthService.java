@@ -25,9 +25,10 @@ public class AuthService {
 
     // TODO: Security Config
     private final UserRepository userRepository;
-    private final Map<String, String> refreshStorage = new HashMap<>();
     private final JwtProvider jwtProvider;
 //    private final PasswordEncoder passwordEncoder;
+
+    private final Map<String, String> refreshStorage = new HashMap<>();
 
     public JwtResponseDTO registerUser(RegistrationRequestDTO registerRequest) {
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
