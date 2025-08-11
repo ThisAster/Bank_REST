@@ -1,4 +1,0 @@
-CREATE TABLE roles (
-    id BIGSERIAL PRIMARY KEY,
-    role VARCHAR(20)
-);

@@ -1,12 +1,12 @@
 package com.example.bankcards.dto;
 
-import jakarta.validation.constraints.NotEmpty;
+import com.example.bankcards.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -16,6 +16,5 @@ public class RegistrationRequestDTO {
     private String username;
     private String email;
     private String password;
-    @NotEmpty
-    private List<String> roles;
+    private Set<Role> roles;
 }

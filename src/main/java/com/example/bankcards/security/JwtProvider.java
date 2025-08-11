@@ -1,6 +1,8 @@
 package com.example.bankcards.security;
 
+import com.example.bankcards.entity.RefreshToken;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.repository.RefreshTokenRepository;
 import com.example.bankcards.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -25,6 +27,7 @@ public class JwtProvider {
     private final SecretKey jwtAccessSecret;
     private final SecretKey jwtRefreshSecret;
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Value("${jwt.expiration.access}")
     private int expirationAccessInMinutes;
@@ -34,11 +37,13 @@ public class JwtProvider {
     public JwtProvider(
             @Value("${jwt.secret.access}") String jwtAccessSecretBase64,
             @Value("${jwt.secret.refresh}") String jwtRefreshSecretBase64,
-            UserRepository userRepository
+            UserRepository userRepository,
+            RefreshTokenRepository refreshTokenRepository
     ) {
         this.jwtAccessSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecretBase64));
         this.jwtRefreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtRefreshSecretBase64));
         this.userRepository = userRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     public String generateAccessToken(@NonNull User user) {
@@ -63,11 +68,22 @@ public class JwtProvider {
         final Instant refreshExpirationInstant = now.plusDays(expirationRefreshInMinutes)
                 .atZone(ZoneId.systemDefault()).toInstant();
         final Date refreshExpiration = Date.from(refreshExpirationInstant);
-        return Jwts.builder()
+
+        final String refreshToken = Jwts.builder()
                 .subject(user.getUsername())
                 .expiration(refreshExpiration)
                 .signWith(jwtRefreshSecret)
                 .compact();
+
+        final RefreshToken refreshTokenEntity = RefreshToken.builder()
+                        .user(user)
+                        .token(refreshToken)
+                        .expiryDate(refreshExpirationInstant)
+                        .build();
+
+        refreshTokenRepository.save(refreshTokenEntity);
+
+        return refreshToken;
     }
 
     public boolean validateAccessToken(@NonNull String accessToken) {
@@ -121,7 +137,7 @@ public class JwtProvider {
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("User with name %s not found", username)));
 
         if (!user.isEnabled()) {
-            throw new UsernameNotFoundException("User is disabled");
+            throw new UsernameNotFoundException(String.format("User with name %s disabled", username));
         }
 
         jwtAuthentication.setPrincipal(user);
