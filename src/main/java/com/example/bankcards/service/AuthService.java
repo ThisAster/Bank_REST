@@ -64,17 +64,18 @@ public class AuthService {
 
     public JwtResponseDTO loginUser(LoginRequestDTO loginRequest) {
         final User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             log.info("Wrong password");
-            throw new RuntimeException("Неправильный пароль");
-        } else {
-            final String accessToken = jwtProvider.generateAccessToken(user);
-            final String refreshToken = jwtProvider.generateRefreshToken(user);
-            refreshStorage.put(user.getUsername(), refreshToken);
-
-            return new JwtResponseDTO(accessToken, refreshToken);
+            throw new RuntimeException("Wrong password");
         }
+
+        final String accessToken = jwtProvider.generateAccessToken(user);
+        final String refreshToken = jwtProvider.generateRefreshToken(user);
+        refreshStorage.put(user.getUsername(), refreshToken);
+
+        return new JwtResponseDTO(accessToken, refreshToken);
     }
 
     public JwtResponseDTO getAccessToken(String refreshToken) {
@@ -84,12 +85,12 @@ public class AuthService {
             final String saveRefreshToken = refreshStorage.get(username);
             if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
                 final User user = userRepository.findByUsername(username)
-                        .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+                        .orElseThrow(() -> new RuntimeException("User not found"));
                 final String accessToken = jwtProvider.generateAccessToken(user);
                 return new JwtResponseDTO(accessToken, null);
             }
         }
-        throw new RuntimeException("Неправильный refresh token");
+        throw new RuntimeException("Wrong refresh token");
     }
 
     public JwtResponseDTO refresh(String refreshToken) {
@@ -99,14 +100,14 @@ public class AuthService {
             final String saveRefreshToken = refreshStorage.get(username);
             if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
                 final User user = userRepository.findByUsername(username)
-                        .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+                        .orElseThrow(() -> new RuntimeException("User not found"));
                 final String accessToken = jwtProvider.generateAccessToken(user);
                 final String newRefreshToken = jwtProvider.generateRefreshToken(user);
                 refreshStorage.put(user.getUsername(), newRefreshToken);
                 return new JwtResponseDTO(accessToken, newRefreshToken);
             }
         }
-        throw new RuntimeException("Невалидный JWT токен");
+        throw new RuntimeException("Not valid JWT token");
     }
 
     public JwtAuthentication getAuthInfo() {
