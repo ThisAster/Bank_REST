@@ -12,6 +12,7 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public class AuthService {
     // TODO: Security Config
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     private final Map<String, String> refreshStorage = new HashMap<>();
 
@@ -48,7 +49,7 @@ public class AuthService {
         User newUser = User.builder()
                 .username(registerRequest.getUsername())
                 .email(registerRequest.getEmail())
-//                .password(passwordEncoder.encode(registrationRequestDto.getPassword()))
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .roles(registerRequest.getRoles())
                 .build();
 
@@ -64,14 +65,15 @@ public class AuthService {
     public JwtResponseDTO loginUser(LoginRequestDTO loginRequest) {
         final User user = userRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
-        if (user.getPassword().equals(loginRequest.getPassword())) {
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            log.info("Wrong password");
+            throw new RuntimeException("Неправильный пароль");
+        } else {
             final String accessToken = jwtProvider.generateAccessToken(user);
             final String refreshToken = jwtProvider.generateRefreshToken(user);
             refreshStorage.put(user.getUsername(), refreshToken);
 
             return new JwtResponseDTO(accessToken, refreshToken);
-        } else {
-            throw new RuntimeException("Неправильный пароль");
         }
     }
 
